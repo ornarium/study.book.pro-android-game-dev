@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, JavaGLActivity!</string>
+    <string name="app_name">OpenGL Java</string>
+    <string name="java_gl_name">CH05.Java GL</string>
+	<string name="native_gl_name">CH05.Natvie GL</string>
+</resources>

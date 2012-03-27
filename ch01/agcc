@@ -1,0 +1,81 @@
+#!/bin/bash
+
+############################################################
+# 안드로이드 컴파일 보조 스크립트 agcc
+# CodeSourcery G++ Toolchain for ARM 기준.
+############################################################
+
+############################################################
+# 파일들이 설치된 디렉터리의 루트
+# 시스템에 맞게 적절히 수정.
+############################################################
+HOME=/home/ormak
+
+#JVM위치
+JAVA_HOME=/opt/jdk1.7.0_02/
+
+#기기의 시스템 이미지(추출한 공유 시스템 라이브러리 경로)
+SYS_ROOT=$HOME/project/study.pro-android-games/ch01/system-lib
+
+#안드로이드 소스코드
+SYS_DEV=$HOME/project/WORKING
+
+# CodeSourcery 도구사슬 위치
+TOOLCHAIN_ROOT=/opt/arm-2009q3
+
+############################################################
+# 헤더파일들과 라이브러리 파일 위치들
+# 변경할 필요 없음.
+############################################################
+BASE=$SYS_DEV/frameworks/base
+
+# C런타임
+LIBC=$SYS_DEV/bionic/libc
+
+# 수학 라이브러리
+LIBM=${SYS_DEV}/bionic/libm
+
+# 일부 필수 GCC 컴파일러 라이브러리들
+## stdarg 헤더를 못찾는다면 이 부분을 고칠것
+#TC=${SYS_DEV}/prebuilt/linux-x86/toolchain/arm-eabi-4.3.1/lib/gcc/arm-eabi/4.3.1
+TC=${SYS_DEV}/prebuilt/linux-x86/toolchain/arm-eabi-4.4.3/lib/gcc/arm-eabi/4.4.3
+
+# 커널 헤더들. 고성능 3d 게임에 요긴
+#KERNEL=${SYS_DEV}/kernel
+KERNEL=${HOME}/project/linux-3.2-rc5
+
+# GNU GZIP
+LIBZ=${SYS_DEV}/external/zlib
+
+# Expat(XML 파서)
+EXPAT=${SYS_DEV}/external/expat/lib
+
+# 헤더파일들
+AND_INC="-I$JAVA_HOME/include"
+AND_INC+=" -I${JAVA_HOME}/include/linux"
+AND_INC+=" -I${LIBC}/include"
+AND_INC+=" -I${LIBC}/arch-arm/include"
+AND_INC+=" -I${LIBC}/arch-arm/asm/include" #added
+AND_INC+=" -I${LIBC}/kernel/arch-arm/include"
+AND_INC+=" -I${LIBC}/kernel/arch-arm" #added
+AND_INC+=" -I${LIBM}/include"
+AND_INC+=" -I${BASE}/include"
+AND_INC+=" -I${TC}/include"
+AND_INC+=" -I${KERNEL}/include"
+AND_INC+=" -I${KERNEL}/arch/arm/include -I${KERNEL}/arch/arm/mach-ebsa110/include"
+AND_INC+=" -I${SYS_DEV}/system/core/include"
+AND_INC+=" -I${LIBZ}"
+AND_INC+=" -I${EXPAT}"
+
+
+############################################################
+# 도구사슬 컴파일러 명령
+############################################################
+CROSS=arm-none-linux-gnueabi-
+GCC=${CROSS}gcc
+
+# 디버깅 시 다음 줄의 주석 표시를 제거
+# echo ${GCC} -nostdinc ${AND_INC} "$@"
+
+# 실행
+${GCC} -nostdinc ${AND_INC} "$@"

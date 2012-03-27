@@ -1,0 +1,2 @@
+ * 단말기 /system/lib 로부터 공유라이브러리 추출
+ * 컴파일 하는데 AND_INC가 제대로 안되면 stdarg.h나 posix_linux.h, types.h 를 못찾는 경우가 있다.

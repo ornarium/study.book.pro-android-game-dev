@@ -1,0 +1,56 @@
+#!/bin/bash
+
+############################################################
+# 안드로이드 링커 보조 스크립트 ald
+# 시스템에 맞게 적절히 수정.
+############################################################
+HOME=/home/ormak
+
+#JVM위치
+JAVA_HOME=/opt/jdk1.7.0_02/
+
+#기기의 시스템 이미지(추출한 공유 시스템 라이브러리 경로)
+SYS_ROOT=$HOME/project/study.pro-android-games/ch01/system-lib
+
+#안드로이드 소스코드
+SYS_DEV=$HOME/project/WORKING
+
+# CodeSourcery 도구사슬 위치
+TOOLCHAIN_ROOT=/opt/arm-2009q3
+
+# 안드로이드용 libgcc.a 이 부분은 알아서 검색해야 될것으로보임
+#LIBGCC=${SYS_DEV}/prebuilt/darwin-x86/toolchain/arm-eabi-4.2.1/lib/gcc/arm-eabi/4.2.1/libgcc.a
+#LIBGCC=${SYS_DEV}/prebuilt/linux-x86/toolchain/arm-linux-androideabi-4.4.x/lib/gcc/arm-linux-androideabi/4.4.3/libgcc.a
+
+# CodeSourcery의 libgcc.a
+#LIBGCC=${TOOLCHAIN_ROOT}/lib/gcc/arm-none-linux-gnueabi/4.3.2/libgcc.a
+
+# 링크할 라이브러리들: C런타임, 수학, 기타 등등
+LIBRARIES="-lc -lm ${LIBGCC}"
+
+# 라이브러리 경로들. rpath는 기기의 실행시점 라이브러리들의 경로 기기자체에서
+# 프로그램이 제대로 실행되려면 이 경로를 반드시 설정해야 한다
+# rpath ${SYS_ROOT}/lib는 같은 라이브러리들의 데스크톱 시스템상에서의 경로를 지정
+# rpath는 데스크탑상에서 굳이 지정해주지 않아도 되는것 같은데.. 뭐... 원래 코드따라...
+LIB_PATHS="-rpath /system/lib \
+ -rpath ${SYS_ROOT} \
+
+ -L${SYS_ROOT} \
+ -L${JAVA_HOME}/jre/lib/i386 -L. "
+
+# 링커 플래그. --dynamic-linker는 동적 링커를 사용하도록 지정
+# -nostdlib는 toolchain의 표준라이브러리들 대신 링크 시점의 지정된 라이브러리
+# 를 사용하게 만듬
+LD_FLAGS="--dynamic-linker=/system/bin/linker -nostdlib"
+
+############################################################
+# 도구사슬 컴파일러 명령
+############################################################
+CROSS=arm-none-linux-gnueabi-
+LD=${CROSS}ld
+
+# 디버깅 시 다음 줄의 주석 표시를 제거
+echo ${LD} $LD_FLAGS $LIB_PATHS "$@" $LIBRARIES
+
+# 실행
+${LD} $LD_FLAGS $LIB_PATHS "$@" $LIBRARIES

@@ -1,0 +1,29 @@
+ * native용과 직접 java코드로 OpenGL 그리기
+ 
+ * ndk로 구축하는게 개발 시간 및 simple 해서 좀더 낫긴 한데... 실제로
+vim이나 emacs로 작업하기엔 Makefile(Toolchains) 로 하는게 나은듯
+싶다..  물론 framework 소스와 kernel 소스를 가지고 (관리하고) 있어야
+하며, 개발 환경이 바뀌면 매번 (심력이 소모되는) 셋팅을 해줘야 한다는게
+단점 -_-;
+
+ * 책에서는 1.5버전으로 작업하는데 2.1에서는 EglHelper가 없기 때문에,
+ 그냥 대부분의 작업을 SurfaceView에서 처리하고 GLThread는 렌더링과
+ Tick처리(지금 소스에는 없음)를 하도록 하였다. 책에서는 GLThread에서
+ Surface생성/초기화/제거 등을 하고 있었다.
+
+ * ndk로 빌드하기 위해서는 반드시 jni 디렉토리 아래에 소스가
+   위치해야 한다
+
+ * ndk로 빌드시 OnLoad등의 JNI Load Function을 쓰지 않아도 된다. 단, CodeSourcery등의 toolchain을 쓰기 위해서는 만들어줘야 한다
+
+
+ * OpenGL Source를 Android로 포팅할때 주의점
+ ** GLES는 단순기하구조에 대해 즉시모드를 지원하지 않는다(glBegin()~glEnd()사용)
+ 그래서, 기하구조는 gl*Pointer함수로 정점배열을 이용해서 지정해야 한다
+ ** 부동소수점 문제도 고려해야 한다. GLES는 고정ㅅ수점 값들을 사용하는 함수들을 제공한다.
+ FPU장치가 없는 기기가 많기 때문...
+ ex) glTranslatex(10 << 16, 0, 0, 2 << 16); //glTranslatef(10.0f, 0.0f, 0.0f, 2.0f);
+ ** GLES는 다각형을 와이어프레임, 점으로 렌더링하는 기능을 제공하지 않는다
+ ** GLU가 없다
+ ** 기본 도형 GL_QUADS, GL_QUAD_STRIP, GL_POLYGON을 지원하지 않는다
+

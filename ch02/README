@@ -1,0 +1,16 @@
+
+ * java native header 파일 생성
+ bin 이하에 Natives.class로 파일이 생성이 된 상태여야만 한다
+
+javah -classpath ../bin/classes/ -d include jni.Natives
+
+
+ * 게다가 javah로 만들어진 javah는 c선언 뿐이고, 실제로 이 함수를 
+ jvm 에 적재하는 부분이 들어가야 되는데, 책에 나와있지 않아서 추가
+필요.
+
+ * 여기서는 책 내용대로 Makefile로 해주었지만, libch02.so와 testlib 테스트 프로그램을 
+ data에 집어넣을수 없는 문제나(업그레이드 되면서 막힌듯), asset에 추가해서 하는 것도 
+ 어느정도 무리가 있으니, Vendor나 OpenSource 소스들을 쓰지 않는다면 ndk로 build하는게
+ 시간을 덜 소모하리라 봄(CodeSourcery Toolchains로 구축하려면 일단 프레임웍과 커널 
+ 소스를 가지고 있어야 한다는것이 난감)
